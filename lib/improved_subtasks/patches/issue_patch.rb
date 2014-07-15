@@ -7,6 +7,8 @@ module ImprovedSubtasks
         base.extend(ClassMethods)
         base.send(:include, InstanceMethods)
         base.class_eval do
+          alias_method_chain :safe_attributes=, :disabled_check_leafs
+          alias_method_chain :recalculate_attributes_for, :improvements
         end
       end
       
@@ -19,7 +21,7 @@ module ImprovedSubtasks
         # Should be called from controllers instead of #attributes=
         # attr_accessible is too rough because we still want things like
         # Issue.new(:project => foo) to work
-        def safe_attributes=(attrs, user=User.current)
+        def safe_attributes_with_disabled_check_leafs=(attrs, user=User.current)
           return unless attrs.is_a?(Hash)
 
           attrs = attrs.dup
@@ -74,7 +76,7 @@ module ImprovedSubtasks
 
 
 
-         def recalculate_attributes_for(issue_id)
+         def recalculate_attributes_for_with_improvements(issue_id)
             if issue_id && p = Issue.find_by_id(issue_id)
               # priority = highest priority of children
               
