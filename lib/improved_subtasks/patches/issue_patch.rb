@@ -97,8 +97,8 @@ module ImprovedSubtasks
               #p.start_date = p.children.minimum(:start_date)
               #p.due_date = p.children.maximum(:due_date)
               
-              p.start_date = p.start_date.nil? ? p.children.minimum(:start_date) : [p.children.minimum(:start_date), p.start_date].min
-              p.due_date = p.due_date.nil? ? p.children.maximum(:due_date) : [p.children.maximum(:due_date), p.due_date].max
+              p.start_date = p.start_date.nil? ?  p.children.minimum(:start_date) : p.children.minimum(:start_date).nil? ? p.start_date : [p.children.minimum(:start_date), p.start_date].min
+              p.due_date = p.due_date.nil? ? p.children.maximum(:due_date) : p.children.maximum(:due_date).nil? ?  p.due_date : [p.children.maximum(:due_date), p.due_date].max
 
               if p.start_date && p.due_date && p.due_date < p.start_date
                 p.start_date, p.due_date = p.due_date, p.start_date
